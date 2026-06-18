@@ -1,0 +1,1090 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Critical CSS for CLS Prevention */
+/* Reserve space for common UI elements to prevent layout shift */
+
+/* Banner/Hero section - reserve fixed height */
+.banner-container {
+  min-height: 75vh;
+  contain: layout style;
+}
+
+@media (min-width: 768px) {
+  .banner-container {
+    min-height: 30vw;
+  }
+}
+
+/* Header - fixed height to prevent CLS */
+header {
+  min-height: 64px;
+  contain: layout;
+}
+
+/* Footer - prevent massive CLS by reserving space */
+footer {
+  min-height: 600px;
+  contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* Image containers - prevent CLS */
+img {
+  content-visibility: auto;
+}
+
+/* Prevent cumulative layout shift for below-fold sections */
+/* Use content-visibility to defer rendering of off-screen sections */
+section {
+  contain-intrinsic-size: auto 300px;
+}
+
+/* Defer rendering of below-fold content for faster Speed Index */
+section:not(:first-of-type) {
+  content-visibility: auto;
+  contain-intrinsic-block-size: 400px;
+}
+
+/* Optimize paint performance - GPU compositing for cards */
+.bento-card,
+.bg-card {
+  will-change: transform;
+  contain: layout style paint;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Prevent font swap layout shift */
+@font-face {
+  font-family: 'Geist Fallback';
+  src: local('Arial');
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+  size-adjust: 107%;
+}
+
+@font-face {
+  font-family: 'Geist Mono Fallback';
+  src: local('Courier New');
+  ascent-override: 77%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+  size-adjust: 112%;
+}
+
+/* Critical render performance */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Reduce rendering complexity on mobile */
+@media (max-width: 767px) {
+  /* Simplify animations on mobile for better performance */
+  .hover-lift,
+  .interactive-element {
+    transition-duration: 150ms;
+  }
+  
+  /* Disable complex hover effects on touch devices */
+  @media (hover: none) {
+    .hover-lift:hover,
+    .hover\:scale-105:hover {
+      transform: none;
+    }
+  }
+}
+
+:root {
+  /* Updated color system to use exact #002366 navy blue as requested */
+  /* Professional Navy Blue (#002366) & Clean White/Black Color System */
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.15 0 0);
+
+  /* Primary: Exact #002366 Navy Blue */
+  --primary: oklch(0.28 0.08 265);
+  --primary-foreground: oklch(1 0 0);
+
+  /* Secondary: Pure Black for contrast */
+  --secondary: oklch(0.1 0 0);
+  --secondary-foreground: oklch(1 0 0);
+
+  /* Accent: Lighter blue for CTAs and highlights */
+  --accent: oklch(0.5 0.15 265);
+  --accent-foreground: oklch(1 0 0);
+
+  /* Neutrals - Clean whites and subtle grays */
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.48 0.01 265);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0 0);
+
+  /* UI Elements */
+  --border: oklch(0.92 0 0);
+  --input: oklch(0.98 0 0);
+  --ring: oklch(0.28 0.08 265);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(1 0 0);
+
+  /* Chart colors - all variations of navy blue */
+  --chart-1: oklch(0.28 0.08 265);
+  --chart-2: oklch(0.5 0.15 265);
+  --chart-3: oklch(0.65 0.08 265);
+  --chart-4: oklch(0.4 0.12 265);
+  --chart-5: oklch(0.35 0.08 265);
+
+  /* Radius - modern, soft curves */
+  --radius: 0.75rem;
+
+  /* Sidebar */
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0.15 0 0);
+
+  /* Luxury Premium Colors */
+  --luxury-gold: #d4af37;
+  --luxury-navy: #002366;
+  --luxury-cream: #faf8f3;
+  --luxury-dark: #1a1a1a;
+  --luxury-border: #e8e6e1;
+}
+
+.dark {
+  --background: oklch(0.12 0 0);
+  --foreground: oklch(0.95 0 0);
+
+  --primary: oklch(0.45 0.15 265);
+  --primary-foreground: oklch(0.12 0 0);
+
+  --secondary: oklch(0.2 0 0);
+  --secondary-foreground: oklch(0.95 0 0);
+
+  --accent: oklch(0.55 0.15 265);
+  --accent-foreground: oklch(0.12 0 0);
+
+  --muted: oklch(0.18 0 0);
+  --muted-foreground: oklch(0.62 0.01 265);
+  --card: oklch(0.15 0 0);
+  --card-foreground: oklch(0.95 0 0);
+
+  --border: oklch(0.25 0 0);
+  --input: oklch(0.2 0 0);
+  --ring: oklch(0.45 0.15 265);
+
+  --sidebar: oklch(0.15 0 0);
+  --sidebar-foreground: oklch(0.95 0 0);
+}
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: calc(var(--radius));
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Added modern typography and spacing utilities */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-bold tracking-tight;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+  h4 {
+    @apply text-base font-semibold;
+  }
+  p {
+    @apply text-sm leading-relaxed md:text-base;
+  }
+
+  /* SEO-optimized typography with compact sizing */
+  /* Expert design - high-density UI with compact spacing */
+  /* Micro-typography for metadata */
+  .text-micro {
+    @apply text-xs leading-tight tracking-tight font-medium;
+  }
+
+  /* High-contrast metric labels */
+  .metric-label {
+    @apply text-xs font-semibold text-muted-foreground uppercase tracking-wider;
+  }
+
+  /* Optical spacing instead of large margins */
+  .optical-divider {
+    @apply border-0 border-l border-border/40 pl-3 ml-0;
+  }
+
+  /* Bento grid base for high-density layouts */
+  .bento-grid {
+    @apply grid gap-2 md:gap-3;
+  }
+
+  /* Smooth micro-interactions */
+  @media (prefers-reduced-motion: no-preference) {
+    .interactive-element {
+      @apply transition-all duration-200 ease-out;
+    }
+  }
+}
+
+/* Added modern utility classes for professional real estate design */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Premium gradient overlay */
+  .gradient-overlay {
+    @apply relative before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/60 before:to-transparent;
+  }
+
+  /* Modern card hover effect - GPU accelerated */
+  .hover-lift {
+    @apply transition-[transform,box-shadow] duration-300 hover:shadow-xl hover:-translate-y-1;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* Professional section spacing */
+  .section-padding {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  /* Hide scrollbar for category chips */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Smooth fade animations */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+  }
+
+  /* Luxury Premium Utilities - GPU accelerated */
+  .luxury-card {
+    @apply bg-white border border-[var(--luxury-border)] rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  .luxury-badge {
+    @apply inline-flex items-center gap-1 px-3 py-1 bg-[var(--luxury-gold)]/10 text-[var(--luxury-navy)] rounded-full text-xs font-semibold;
+  }
+
+  .luxury-text-gold {
+    @apply text-[var(--luxury-gold)];
+  }
+
+  .luxury-text-navy {
+    @apply text-[var(--luxury-navy)];
+  }
+
+  .luxury-hero-overlay {
+    @apply relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-black/40 before:via-black/20 before:to-transparent;
+  }
+
+  .luxury-section {
+    @apply py-12 md:py-20 px-4 md:px-6;
+  }
+
+  .luxury-heading {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--luxury-navy)] tracking-tight;
+  }
+
+  .luxury-subheading {
+    @apply text-lg md:text-xl text-gray-600 font-light tracking-wide;
+  }
+
+  .luxury-divider {
+    @apply h-1 w-16 bg-gradient-to-r from-[var(--luxury-gold)] to-[var(--luxury-navy)] rounded-full;
+  }
+
+  .luxury-button {
+    @apply px-6 py-3 bg-[var(--luxury-navy)] text-white rounded-lg font-semibold transition-all duration-300 hover:shadow-lg hover:bg-[var(--luxury-navy)]/90;
+  }
+
+  .luxury-button-outline {
+    @apply px-6 py-3 border-2 border-[var(--luxury-navy)] text-[var(--luxury-navy)] rounded-lg font-semibold transition-all duration-300 hover:bg-[var(--luxury-navy)]/5;
+  }
+
+  .luxury-filter-chip {
+    @apply px-4 py-2 bg-white border border-[var(--luxury-border)] text-[var(--luxury-navy)] rounded-full text-sm font-medium cursor-pointer transition-all duration-200 hover:border-[var(--luxury-navy)] hover:shadow-md;
+  }
+
+  .luxury-filter-chip.active {
+    @apply bg-[var(--luxury-navy)] text-white border-[var(--luxury-navy)];
+  }
+}
+
+/* Custom keyframes - GPU composited properties only (transform, opacity) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale3d(0.95, 0.95, 1);
+  }
+  to {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+/* Marquee scroll animations for developers section */
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scroll-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 35s linear infinite;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 35s linear infinite;
+}
+
+@keyframes voicePulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 oklch(0.55 0.2 25 / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px oklch(0.55 0.2 25 / 0);
+  }
+}
+
+.voice-pulse {
+  animation: voicePulse 1.5s ease-in-out infinite;
+}
+
+/* Location pulse animation for "near me" searches */
+@keyframes locationPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 oklch(0.6 0.15 250 / 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 6px oklch(0.6 0.15 250 / 0);
+    transform: scale(1.05);
+  }
+}
+
+.location-pulse {
+  animation: locationPulse 2s ease-in-out infinite;
+}
+
+/* Listening indicator animation bars */
+@keyframes listeningBars {
+  0%, 100% {
+    height: 4px;
+  }
+  50% {
+    height: 16px;
+  }
+}
+
+.listening-bar {
+  animation: listeningBars 0.6s ease-in-out infinite;
+}
+
+.listening-bar:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.listening-bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.listening-bar:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+/* Distance badge animation */
+@keyframes distancePing {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.distance-ping::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: distancePing 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  background: currentColor;
+  opacity: 0.3;
+}
+
+/* Luxury card shine animation */
+@keyframes luxuryShine {
+  0% {
+    transform: translateX(-100%);
+  }
+  50%, 100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-luxury-shine {
+  animation: luxuryShine 3s ease-in-out infinite;
+}
+
+/* Staggered animation delay utilities - using GPU-composited properties only */
+/* These use opacity and transform only to avoid layout thrashing */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+
+/* GPU-accelerated property card animations */
+.property-card-animate {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Bottom tab navigation for mobile-first design */
+@layer components {
+  .bottom-nav-container {
+    @apply fixed bottom-0 left-0 right-0 z-40 md:hidden bg-card border-t border-border;
+  }
+
+  .bottom-nav {
+    @apply flex items-center justify-around px-0;
+  }
+
+  .bottom-nav-item {
+    @apply flex-1 flex flex-col items-center justify-center gap-1 px-2 py-2 text-xs font-medium text-muted-foreground hover:text-primary transition-colors relative;
+  }
+
+  .bottom-nav-item.active {
+    @apply text-primary;
+  }
+
+  .bottom-nav-item.active::after {
+    @apply absolute bottom-0 left-0 right-0 h-0.5 bg-primary;
+    content: "";
+  }
+
+  /* Floating Action Button */
+  .fab {
+    @apply absolute left-1/2 -translate-x-1/2 -top-6 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center;
+  }
+
+  /* Bento card with high-density spacing */
+  .bento-card {
+    @apply bg-card border border-border rounded-lg p-2.5 md:p-3 overflow-hidden hover:shadow-sm transition-shadow;
+  }
+
+  /* Responsive padding for high-density UI */
+  .content-tight {
+    @apply px-3 py-2 md:px-4 md:py-3;
+  }
+
+  /* Mega Menu Container - Full width dropdown */
+  .mega-menu-container {
+    @apply w-screen relative left-1/2 -translate-x-1/2;
+  }
+
+  /* Mega Menu - Proper positioning below nav */
+  .mega-menu {
+    @apply bg-white border-t border-b border-gray-200 shadow-2xl overflow-visible;
+  }
+
+  /* Mega Menu Inner Content - Constrained width */
+  .mega-menu-content {
+    @apply mx-auto max-w-7xl px-4 md:px-6 py-6;
+  }
+
+
+
+  /* Mega Menu Dropdown - Seamless attachment */
+  .mega-menu-dropdown {
+    @apply absolute left-0 right-0 top-full pt-0 z-50 w-screen origin-top-left;
+  }
+
+  /* Mega Menu Inner Wrapper */
+  .mega-menu-inner {
+    @apply ml-0 mr-auto;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+}
+
+/* WordPress Block Editor Styles */
+.editor-styles-wrapper {
+  @apply min-h-[400px] outline-none;
+}
+
+.block-editor-writing-flow {
+  @apply focus:outline-none;
+}
+
+.wp-block {
+  @apply my-4 first:mt-0 last:mb-0;
+}
+
+.wp-block-heading {
+  @apply font-bold;
+}
+
+.wp-block-paragraph {
+  @apply leading-relaxed;
+}
+
+.wp-block-quote {
+  @apply border-l-4 border-primary/30 pl-4 italic text-muted-foreground my-4;
+}
+
+.wp-block-list {
+  @apply ml-6 my-4;
+}
+
+.wp-block-list ul {
+  @apply list-disc;
+}
+
+.wp-block-list ol {
+  @apply list-decimal;
+}
+
+.wp-block-code {
+  @apply bg-muted p-4 rounded-lg font-mono text-sm overflow-x-auto my-4;
+}
+
+.wp-block-image {
+  @apply my-4 rounded-lg overflow-hidden;
+}
+
+.wp-block-image img {
+  @apply max-w-full h-auto;
+}
+
+.wp-block-separator {
+  @apply my-8 border-border;
+}
+
+.wp-block-table {
+  @apply w-full border-collapse my-4;
+}
+
+.wp-block-table th,
+.wp-block-table td {
+  @apply border border-border px-3 py-2 text-left;
+}
+
+.wp-block-table th {
+  @apply bg-muted font-semibold;
+}
+
+.block-editor-rich-text__editable {
+  @apply focus:outline-none;
+}
+
+.block-editor-rich-text__editable.is-selected {
+  @apply ring-2 ring-primary/20 ring-offset-2 rounded;
+}
+
+/* Block placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+  @apply text-muted-foreground/50 float-left h-0 pointer-events-none;
+  content: attr(data-placeholder);
+}
+
+.ProseMirror .is-empty::before {
+  @apply text-muted-foreground/40 float-left h-0 pointer-events-none;
+  content: attr(data-placeholder);
+}
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  @apply outline-none min-h-[400px];
+}
+
+.ProseMirror > * + * {
+  @apply mt-4;
+}
+
+.ProseMirror h1 {
+  @apply text-3xl font-bold;
+}
+
+.ProseMirror h2 {
+  @apply text-2xl font-bold;
+}
+
+.ProseMirror h3 {
+  @apply text-xl font-semibold;
+}
+
+.ProseMirror h4 {
+  @apply text-lg font-semibold;
+}
+
+.ProseMirror p {
+  @apply leading-relaxed;
+}
+
+.ProseMirror ul {
+  @apply list-disc ml-6;
+}
+
+.ProseMirror ol {
+  @apply list-decimal ml-6;
+}
+
+.ProseMirror li {
+  @apply my-1;
+}
+
+.ProseMirror blockquote {
+  @apply border-l-4 border-primary/30 pl-4 italic text-muted-foreground;
+}
+
+.ProseMirror pre {
+  @apply bg-muted p-4 rounded-lg overflow-x-auto font-mono text-sm;
+}
+
+.ProseMirror code {
+  @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.ProseMirror pre code {
+  @apply bg-transparent p-0;
+}
+
+.ProseMirror a {
+  @apply text-primary underline hover:no-underline;
+}
+
+.ProseMirror img {
+  @apply max-w-full h-auto rounded-lg;
+}
+
+.ProseMirror hr {
+  @apply my-6 border-border;
+}
+
+.ProseMirror table {
+  @apply w-full border-collapse;
+}
+
+.ProseMirror th,
+.ProseMirror td {
+  @apply border border-border px-3 py-2 text-left;
+}
+
+.ProseMirror th {
+  @apply bg-muted font-semibold;
+}
+
+.ProseMirror mark {
+  @apply bg-yellow-200 dark:bg-yellow-800;
+}
+
+/* Rich Text Editor Styles - Tailwind v4 compatible */
+.rte-content {
+  @apply min-h-[400px] p-4 outline-none;
+}
+
+.rte-content:focus {
+  @apply outline-none;
+}
+
+.rte-content h1 {
+  @apply text-3xl font-bold mt-6 mb-4;
+}
+
+.rte-content h2 {
+  @apply text-2xl font-bold mt-5 mb-3;
+}
+
+.rte-content h3 {
+  @apply text-xl font-semibold mt-4 mb-2;
+}
+
+.rte-content p {
+  @apply my-3 leading-relaxed;
+}
+
+.rte-content ul,
+.rte-content ol {
+  @apply my-3 ml-6;
+}
+
+.rte-content ul {
+  @apply list-disc;
+}
+
+.rte-content ol {
+  @apply list-decimal;
+}
+
+.rte-content li {
+  @apply my-1;
+}
+
+.rte-content blockquote {
+  @apply border-l-4 border-primary/30 pl-4 italic my-4 text-muted-foreground;
+}
+
+.rte-content pre {
+  @apply bg-muted p-4 rounded-lg my-4 overflow-x-auto;
+}
+
+.rte-content code {
+  @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.rte-content pre code {
+  @apply bg-transparent p-0;
+}
+
+.rte-content a,
+.rte-content .rte-link {
+  @apply text-primary underline hover:no-underline;
+}
+
+.rte-content img,
+.rte-content .rte-image {
+  @apply max-w-full h-auto rounded-lg my-4;
+}
+
+.rte-content hr {
+  @apply my-6 border-border;
+}
+
+.rte-content table {
+  @apply w-full border-collapse my-4;
+}
+
+.rte-content th,
+.rte-content td {
+  @apply border border-border px-3 py-2 text-left;
+}
+
+.rte-content th {
+  @apply bg-muted font-semibold;
+}
+
+/* Placeholder styling */
+.rte-content p.is-editor-empty:first-child::before {
+  @apply text-muted-foreground/50 pointer-events-none float-left h-0;
+  content: attr(data-placeholder);
+}
+
+/* Selection highlight */
+.rte-content ::selection {
+  @apply bg-primary/20;
+}
+
+/* Blog Content Styles - replaces prose */
+.blog-content {
+  @apply text-foreground;
+}
+
+.blog-content h1 {
+  @apply text-3xl font-bold mt-8 mb-4;
+}
+
+.blog-content h2 {
+  @apply text-2xl font-bold mt-6 mb-3;
+}
+
+.blog-content h3 {
+  @apply text-xl font-semibold mt-5 mb-2;
+}
+
+.blog-content h4 {
+  @apply text-lg font-semibold mt-4 mb-2;
+}
+
+.blog-content p {
+  @apply my-4 leading-relaxed text-muted-foreground;
+}
+
+.blog-content ul,
+.blog-content ol {
+  @apply my-4 ml-6 text-muted-foreground;
+}
+
+.blog-content ul {
+  @apply list-disc;
+}
+
+.blog-content ol {
+  @apply list-decimal;
+}
+
+.blog-content li {
+  @apply my-2;
+}
+
+.blog-content blockquote {
+  @apply border-l-4 border-primary/30 pl-4 italic my-6 text-muted-foreground;
+}
+
+.blog-content pre {
+  @apply bg-muted p-4 rounded-lg my-4 overflow-x-auto font-mono text-sm;
+}
+
+.blog-content code {
+  @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.blog-content pre code {
+  @apply bg-transparent p-0;
+}
+
+.blog-content a {
+  @apply text-primary underline hover:no-underline;
+}
+
+.blog-content img {
+  @apply max-w-full h-auto rounded-lg my-4;
+}
+
+.blog-content hr {
+  @apply my-8 border-border;
+}
+
+.blog-content th,
+.blog-content td {
+  @apply border border-border px-3 py-2 text-left;
+  min-width: 100px;
+}
+
+.blog-content th {
+  @apply bg-muted font-semibold;
+  white-space: nowrap;
+}
+
+.blog-content strong {
+  @apply font-semibold text-foreground;
+}
+
+.blog-content em {
+  @apply italic;
+}
+
+.blog-content u {
+  @apply underline;
+}
+
+.blog-content s,
+.blog-content del,
+.blog-content strike {
+  @apply line-through opacity-70;
+}
+
+.blog-content mark {
+  @apply bg-yellow-200 dark:bg-yellow-800/60 text-foreground rounded px-0.5;
+}
+
+/* Text alignment from TipTap TextAlign extension */
+.blog-content [style*="text-align: left"],
+.blog-content .has-text-align-left {
+  text-align: left;
+}
+.blog-content [style*="text-align: center"],
+.blog-content .has-text-align-center {
+  text-align: center;
+}
+.blog-content [style*="text-align: right"],
+.blog-content .has-text-align-right {
+  text-align: right;
+}
+.blog-content [style*="text-align: justify"],
+.blog-content .has-text-align-justify {
+  text-align: justify;
+}
+
+/* h5, h6 */
+.blog-content h5 {
+  @apply text-base font-semibold mt-4 mb-2;
+}
+.blog-content h6 {
+  @apply text-sm font-semibold mt-3 mb-1 text-muted-foreground;
+}
+
+/* Nested lists */
+.blog-content ul ul,
+.blog-content ol ol,
+.blog-content ul ol,
+.blog-content ol ul {
+  @apply my-1 ml-4;
+}
+
+/* Images — handle inline width styles from the editor */
+.blog-content img {
+  @apply max-w-full h-auto rounded-lg my-4;
+  display: block;
+}
+
+/* Table — responsive wrapper + colgroup widths from resizable tables */
+.blog-content table {
+  @apply border-collapse my-0 text-sm;
+  width: 100%;
+  min-width: 100%;
+  table-layout: auto;
+}
+
+/* Responsive scroll wrapper — injected via CSS around every table */
+.blog-content table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Restore table semantics inside the scrollable block */
+.blog-content table > thead,
+.blog-content table > tbody,
+.blog-content table > tfoot,
+.blog-content table > tr {
+  display: table-row-group;
+}
+.blog-content table > thead {
+  display: table-header-group;
+}
+.blog-content table > tfoot {
+  display: table-footer-group;
+}
+.blog-content table > tr {
+  display: table-row;
+}
+.blog-content table > colgroup {
+  display: table-column-group;
+}
+.blog-content table > col {
+  display: table-column;
+}
+
+/* Add spacing before/after the scrollable table block */
+.blog-content table {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-content colgroup col {
+  width: auto;
+}
+
+/* Code inline */
+.blog-content :not(pre) > code {
+  @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-primary;
+}
+
+/* Blockquote nested paragraph */
+.blog-content blockquote p {
+  @apply my-0;
+}
+
+/* Horizontal rule */
+.blog-content hr {
+  @apply my-8 border-0 border-t border-border;
+}
+
+/* Link visited */
+.blog-content a:visited {
+  @apply text-primary/80;
+}
