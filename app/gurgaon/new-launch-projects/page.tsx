@@ -780,7 +780,6 @@ function NewLaunchProjectsGurgaonInner() {
         </section>
 
       </main>
-      <Footer />
     </>
   )
 }

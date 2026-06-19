@@ -842,7 +842,6 @@ function ThreeBHKApartmentsGurgaonInner() {
         </section>
 
       </main>
-      <Footer />
     </>
   )
 }

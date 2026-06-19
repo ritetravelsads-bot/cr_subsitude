@@ -858,7 +858,6 @@ function LuxuryApartmentsGurgaonInner() {
         </section>
 
       </main>
-      <Footer />
     </>
   )
 }
