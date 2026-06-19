@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -196,7 +196,7 @@ const SEGMENT_OPTIONS = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function ThreeBHKApartmentsGurgaon() {
+function ThreeBHKApartmentsGurgaonInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -810,5 +810,13 @@ export default function ThreeBHKApartmentsGurgaon() {
       </main>
       <Footer />
     </>
+  )
+}
+
+export default function ThreeBHKApartmentsGurgaon() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <ThreeBHKApartmentsGurgaonInner />
+    </Suspense>
   )
 }

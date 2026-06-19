@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -161,7 +161,7 @@ const PROJECT_STATUS_OPTIONS = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function LuxuryApartmentsGurgaon() {
+function LuxuryApartmentsGurgaonInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -828,5 +828,13 @@ export default function LuxuryApartmentsGurgaon() {
       </main>
       <Footer />
     </>
+  )
+}
+
+export default function LuxuryApartmentsGurgaon() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <LuxuryApartmentsGurgaonInner />
+    </Suspense>
   )
 }
