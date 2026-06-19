@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn, formatPriceToIndian, getPropertyUrl, BUDGET_RANGES, parseBudgetRange } from '@/lib/utils'
 import LuxuryPropertyCard from '@/components/property/luxury-property-card'
+import { EnquiryPopup } from '@/components/property/enquiry-popup'
 import Header from '@/components/layout/header'
 import Footer from '@/components/layout/footer'
 
@@ -183,6 +184,14 @@ function LuxuryApartmentsGurgaonInner() {
     rera_registered: searchParams.get('rera_registered') || '',
   })
 
+  const [popupOpen, setPopupOpen] = useState(false)
+  const [popupCorridor, setPopupCorridor] = useState<string | undefined>(undefined)
+
+  const openEnquiryPopup = useCallback((corridorName?: string) => {
+    setPopupCorridor(corridorName)
+    setPopupOpen(true)
+  }, [])
+
   const fetchProperties = useCallback(async () => {
     setLoading(true)
     try {
@@ -241,6 +250,13 @@ function LuxuryApartmentsGurgaonInner() {
     <>
       <Header />
 
+      <EnquiryPopup
+        open={popupOpen}
+        onClose={() => setPopupOpen(false)}
+        pageContext="Luxury Apartments in Gurgaon"
+        corridorName={popupCorridor}
+      />
+
       {/* ── SEO Head content inline ── */}
       <main className="min-h-screen bg-white">
 
@@ -284,14 +300,22 @@ function LuxuryApartmentsGurgaonInner() {
             </p>
 
             <div className="flex flex-wrap gap-3">
-              <a href="#projects" className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--luxury-gold)] text-[var(--luxury-navy)] font-semibold rounded-lg hover:bg-[var(--luxury-gold)]/90 transition-colors">
+              <button
+                type="button"
+                onClick={() => openEnquiryPopup()}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--luxury-gold)] text-[var(--luxury-navy)] font-semibold rounded-lg hover:bg-[var(--luxury-gold)]/90 transition-colors"
+              >
                 <Building2 className="h-4 w-4" />
                 View Luxury Projects
-              </a>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors">
+              </button>
+              <button
+                type="button"
+                onClick={() => openEnquiryPopup()}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors"
+              >
                 <Phone className="h-4 w-4" />
                 Get Expert Recommendations
-              </Link>
+              </button>
             </div>
 
             {/* Quick stats */}
@@ -389,13 +413,13 @@ function LuxuryApartmentsGurgaonInner() {
                     </p>
                   </div>
                   <div className="flex-shrink-0 self-center">
-                    <a
-                      href="#projects"
-                      onClick={() => updateFilter('project_status', '')}
+                    <button
+                      type="button"
+                      onClick={() => openEnquiryPopup(corridor.name)}
                       className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--luxury-navy)] border border-[var(--luxury-navy)] px-4 py-2 rounded-lg hover:bg-[var(--luxury-navy)] hover:text-white transition-colors"
                     >
                       View Projects <ArrowRight className="h-4 w-4" />
-                    </a>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -814,13 +838,21 @@ function LuxuryApartmentsGurgaonInner() {
               Browse luxury apartments across Gurgaon&apos;s top corridors on CountryRoof. Compare verified listings by location, developer, configuration, and price. Access RERA details, pricing history, and possession timelines to make the most informed luxury property decision in Gurgaon&apos;s 2026 market.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <a href="#projects" className="inline-flex items-center gap-2 px-7 py-3 bg-[var(--luxury-gold)] text-[var(--luxury-navy)] font-bold rounded-lg hover:bg-[var(--luxury-gold)]/90 transition-colors">
+              <button
+                type="button"
+                onClick={() => openEnquiryPopup()}
+                className="inline-flex items-center gap-2 px-7 py-3 bg-[var(--luxury-gold)] text-[var(--luxury-navy)] font-bold rounded-lg hover:bg-[var(--luxury-gold)]/90 transition-colors"
+              >
                 Browse Verified Projects
-              </a>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-7 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors">
+              </button>
+              <button
+                type="button"
+                onClick={() => openEnquiryPopup()}
+                className="inline-flex items-center gap-2 px-7 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors"
+              >
                 <MessageCircle className="h-4 w-4" />
                 Schedule Site Visit
-              </Link>
+              </button>
             </div>
           </div>
         </section>

@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn, formatPriceToIndian, getPropertyUrl, BUDGET_RANGES, parseBudgetRange } from '@/lib/utils'
 import LuxuryPropertyCard from '@/components/property/luxury-property-card'
+import { EnquiryPopup } from '@/components/property/enquiry-popup'
 import Header from '@/components/layout/header'
 import Footer from '@/components/layout/footer'
 
@@ -181,6 +182,14 @@ function NewLaunchProjectsGurgaonInner() {
     rera_registered: searchParams.get('rera_registered') || '',
   })
 
+  const [popupOpen, setPopupOpen] = useState(false)
+  const [popupCorridor, setPopupCorridor] = useState<string | undefined>(undefined)
+
+  const openEnquiryPopup = useCallback((corridorName?: string) => {
+    setPopupCorridor(corridorName)
+    setPopupOpen(true)
+  }, [])
+
   const fetchProperties = useCallback(async () => {
     setLoading(true)
     try {
@@ -239,6 +248,13 @@ function NewLaunchProjectsGurgaonInner() {
     <>
       <Header />
 
+      <EnquiryPopup
+        open={popupOpen}
+        onClose={() => setPopupOpen(false)}
+        pageContext="New Launch Projects in Gurgaon"
+        corridorName={popupCorridor}
+      />
+
       <main className="min-h-screen bg-white">
 
         {/* ── HERO ─────────────────────────────────────────────────────────── */}
@@ -280,14 +296,22 @@ function NewLaunchProjectsGurgaonInner() {
             </p>
 
             <div className="flex flex-wrap gap-3">
-              <a href="#projects" className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--luxury-gold)] text-[var(--luxury-navy)] font-semibold rounded-lg hover:bg-[var(--luxury-gold)]/90 transition-colors">
+              <button
+                type="button"
+                onClick={() => openEnquiryPopup()}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--luxury-gold)] text-[var(--luxury-navy)] font-semibold rounded-lg hover:bg-[var(--luxury-gold)]/90 transition-colors"
+              >
                 <Building2 className="h-4 w-4" />
                 Explore New Launch Projects
-              </a>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors">
+              </button>
+              <button
+                type="button"
+                onClick={() => openEnquiryPopup()}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors"
+              >
                 <Phone className="h-4 w-4" />
                 Get Expert Advice
-              </Link>
+              </button>
             </div>
           </div>
         </section>
@@ -391,12 +415,13 @@ function NewLaunchProjectsGurgaonInner() {
                   <p className="text-xs text-gray-500 mb-1">Sectors: {corridor.sectors}</p>
                   <p className="text-xs text-gray-500 mb-3">Key Developers: {corridor.developers}</p>
                   <p className="text-sm text-gray-700 leading-relaxed mb-4">{corridor.description}</p>
-                  <Link
-                    href={corridor.link}
+                  <button
+                    type="button"
+                    onClick={() => openEnquiryPopup(corridor.name)}
                     className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--luxury-navy)] border border-[var(--luxury-navy)] px-4 py-2 rounded-lg hover:bg-[var(--luxury-navy)] hover:text-white transition-colors"
                   >
                     View Projects <ArrowRight className="h-4 w-4" />
-                  </Link>
+                  </button>
                 </div>
               ))}
             </div>
@@ -735,13 +760,21 @@ function NewLaunchProjectsGurgaonInner() {
               CountryRoof is a Gurgaon-focused luxury real estate advisory. We work exclusively in the premium and luxury segment — our advisors have deep, current, first-hand knowledge of the projects, corridors, and developers that matter. Whether you&apos;re an investor evaluating corridors, an end-user looking for the right home, or an NRI exploring options remotely, we can help you navigate the new launch market with clarity.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <a href="#projects" className="inline-flex items-center gap-2 px-7 py-3 bg-[var(--luxury-gold)] text-[var(--luxury-navy)] font-bold rounded-lg hover:bg-[var(--luxury-gold)]/90 transition-colors">
+              <button
+                type="button"
+                onClick={() => openEnquiryPopup()}
+                className="inline-flex items-center gap-2 px-7 py-3 bg-[var(--luxury-gold)] text-[var(--luxury-navy)] font-bold rounded-lg hover:bg-[var(--luxury-gold)]/90 transition-colors"
+              >
                 Explore New Launch Projects
-              </a>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-7 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors">
+              </button>
+              <button
+                type="button"
+                onClick={() => openEnquiryPopup()}
+                className="inline-flex items-center gap-2 px-7 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors"
+              >
                 <MessageCircle className="h-4 w-4" />
                 Connect with an Advisor
-              </Link>
+              </button>
             </div>
           </div>
         </section>
