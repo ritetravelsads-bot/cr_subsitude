@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState, useCallback, Suspense } from 'react'
+import { useState, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import useSWR from 'swr'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -204,9 +205,6 @@ function ThreeBHKApartmentsGurgaonInner() {
   const currentPage = parseInt(searchParams.get('page') || '1')
   const viewParam = (searchParams.get('view') || 'grid') as 'grid' | 'list'
 
-  const [properties, setProperties] = useState<Property[]>([])
-  const [pagination, setPagination] = useState<Pagination | null>(null)
-  const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(viewParam)
   const [showFilters, setShowFilters] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
@@ -227,34 +225,31 @@ function ThreeBHKApartmentsGurgaonInner() {
     setPopupOpen(true)
   }, [])
 
-  const fetchProperties = useCallback(async () => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams()
-      params.set('city', 'Gurgaon')
-      params.set('bedrooms', '3')
-      params.set('limit', '12')
-      params.set('page', String(currentPage))
-      if (filters.project_status) params.set('project_status', filters.project_status)
-      if (filters.segment) params.set('segment', filters.segment)
-      if (filters.minPrice) params.set('minPrice', filters.minPrice)
-      if (filters.maxPrice) params.set('maxPrice', filters.maxPrice)
-      if (filters.rera_registered) params.set('rera_registered', filters.rera_registered)
-
-      const res = await fetch(`/api/properties?${params.toString()}`)
-      if (res.ok) {
-        const data = await res.json()
-        setProperties(data.properties || [])
-        setPagination(data.pagination || null)
-      }
-    } catch (e) {
-      console.error('[v0] fetch error:', e)
-    } finally {
-      setLoading(false)
-    }
+  const buildQueryString = useCallback(() => {
+    const params = new URLSearchParams()
+    params.set('location', 'Gurgaon')
+    params.set('bedrooms', '3')
+    params.set('limit', '12')
+    params.set('page', String(currentPage))
+    if (filters.project_status) params.set('project_status', filters.project_status)
+    if (filters.segment) params.set('segment', filters.segment)
+    if (filters.minPrice) params.set('minPrice', filters.minPrice)
+    if (filters.maxPrice) params.set('maxPrice', filters.maxPrice)
+    if (filters.rera_registered) params.set('rera_registered', filters.rera_registered)
+    return params.toString()
   }, [currentPage, filters])
 
-  useEffect(() => { fetchProperties() }, [fetchProperties])
+  const { data, isLoading: loading, error: swrError } = useSWR(
+    `/api/properties?${buildQueryString()}`,
+    (url: string) => fetch(url).then(res => {
+      if (!res.ok) throw new Error(`API error ${res.status}`)
+      return res.json()
+    }),
+    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 5000 }
+  )
+
+  const properties: Property[] = data?.properties || []
+  const pagination: Pagination | null = data?.pagination || null
 
   const updateFilter = (key: string, value: string) => {
     const next = { ...filters, [key]: value }
@@ -672,6 +667,13 @@ function ThreeBHKApartmentsGurgaonInner() {
                   <div key={i} className="h-96 rounded-xl bg-gray-100 animate-pulse" />
                 ))}
               </div>
+            ) : swrError ? (
+              <div className="text-center py-20">
+                <Building2 className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+                <h3 className="text-xl font-semibold text-[var(--luxury-navy)] mb-2">Could not load properties</h3>
+                <p className="text-gray-500 mb-6">There was a problem connecting to the server. Please try again.</p>
+                <Button onClick={() => window.location.reload()} variant="outline">Retry</Button>
+              </div>
             ) : properties.length > 0 ? (
               <div className={cn(viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4')}>
                 {properties.map((property) => (
@@ -685,9 +687,13 @@ function ThreeBHKApartmentsGurgaonInner() {
                 <p className="text-gray-500 mb-6">Try adjusting your filters</p>
                 <div className="flex gap-3 justify-center">
                   <Button onClick={clearAllFilters} variant="outline">Clear Filters</Button>
-                  <Link href="/contact" className="inline-flex items-center px-4 py-2 bg-[var(--luxury-navy)] text-white rounded-lg text-sm font-medium">
+                  <button
+                    type="button"
+                    onClick={() => openEnquiryPopup()}
+                    className="inline-flex items-center px-4 py-2 bg-[var(--luxury-navy)] text-white rounded-lg text-sm font-medium"
+                  >
                     Get Personalised Shortlist
-                  </Link>
+                  </button>
                 </div>
               </div>
             )}
@@ -812,7 +818,7 @@ function ThreeBHKApartmentsGurgaonInner() {
           </div>
         </section>
 
-        {/* ── FINAL CTA ────────────────────────────────────────────────────── */}
+        {/* ── FINAL CTA ─────────────────────────────���──────────────────────── */}
         <section className="py-14 bg-[var(--luxury-navy)]">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold text-white mb-4">
